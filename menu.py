@@ -1,44 +1,44 @@
-testMode = False
-testDay = 4
-pdfText = ""
-textToday = []
-menuText = []
+test_mode = False
+test_day = 4
+pdf_text = ""
+text_today = []
+menu_text = []
 
 
-def downloadPdf():
+def download_pdf():
     import requests
-    url = 'http://justika.de/Speisekarten/Justika_Wochenkarte_aktuell.pdf'
+    import codecs
+    url_file = codecs.open('./url.dat', encoding='utf-8')
+    url = url_file.read()
     r = requests.get(url, stream=True)
 
     with open('./wochenkarte.pdf', 'wb') as f:
         f.write(r.content)
 
 
-def extractPdfTextFromPdf():
+def extract_pdf_text_from_pdf():
     import PyPDF2
-    pdfFileObject = open('./wochenkarte.pdf', 'rb')
-    pdfReader = PyPDF2.PdfFileReader(pdfFileObject)
-    global pdfText
-    pdfText = pdfReader.getPage(0).extractText()
+    pdf_file_object = open('./wochenkarte.pdf', 'rb')
+    pdf_reader = PyPDF2.PdfFileReader(pdf_file_object)
+    global pdf_text
+    pdf_text = pdf_reader.getPage(0).extractText()
     # print(pdfText)
 
 
-def extractTodayFromPdfText():
-    currentDay = False
-    for line in pdfText.splitlines():
-        if currentDay:
-            if line.startswith(getNextDayOfTheWeek()):
-                currentDay = False
+def extract_today_from_pdf_text():
+    current_day = False
+    for line in pdf_text.splitlines():
+        if current_day:
+            if line.startswith(get_next_day_of_the_week()):
+                current_day = False
             else:
-                textToday.append(line)
-                #print(line)
-        if line.startswith(getDayOfTheWeek()):
-            textToday.append(line)
-            currentDay = True
-            #print(line)
+                text_today.append(line)
+        if line.startswith(get_day_of_the_week()):
+            text_today.append(line)
+            current_day = True
 
 
-def decodeWeekday(weekdayAsInt: int):
+def decode_weekday(weekday: int):
     switcher = {
         0: "Montag",
         1: "Dienstag",
@@ -48,75 +48,76 @@ def decodeWeekday(weekdayAsInt: int):
         5: "Samstag",
         6: "Sonntag"
     }
-    return switcher.get(weekdayAsInt, "Invalid day")
+    return switcher.get(weekday, "Invalid day")
 
 
-def getNextDayOfTheWeek():
+def get_next_day_of_the_week():
     import datetime
-    weekdayAsInt = (datetime.datetime.today().weekday() + 1) % 7
-    if (testMode):
-        weekdayAsInt = (testDay + 1) % 7
-    weekdayAsString = decodeWeekday(weekdayAsInt)
-    return weekdayAsString
+    weekday_as_int = (datetime.datetime.today().weekday() + 1) % 7
+    if test_mode:
+        weekday_as_int = (test_day + 1) % 7
+    weekday_as_string = decode_weekday(weekday_as_int)
+    return weekday_as_string
 
 
-def getDayOfTheWeek():
+def get_day_of_the_week():
     import datetime
-    weekdayAsInt = datetime.datetime.today().weekday()
-    if (testMode):
-        weekdayAsInt = testDay
-    weekdayAsString = decodeWeekday(weekdayAsInt)
-    return weekdayAsString
+    weekday_as_int = datetime.datetime.today().weekday()
+    if test_mode:
+        weekday_as_int = test_day
+    weekday_as_string = decode_weekday(weekday_as_int)
+    return weekday_as_string
 
 
-def formatMenu(textToday):
-    formatedText = []
-    formatedText.append(textToday[0])
+def format_menu():
+    formated_text = []
+    formated_text.append(text_today[0])
 
     # for each dish
-    rest = textToday[1:]
+    rest = text_today[1:]
     for i in range(0, 3):
-        singleDishString = ''
+        single_dish_string = ''
         for line in rest:
             if line == "":
                 rest = rest[1:]
-                formatedText.append(singleDishString)
+                formated_text.append(single_dish_string)
                 break
             else:
-                singleDishString += line
+                single_dish_string += line
                 rest = rest[1:]
-    return '\n'.join(formatedText)
-    #print(formatedText)
+    return '\n'.join(formated_text)
 
 
-def getMenu():
-    if (not testMode) or (testDay == 5) or (testDay == 6):
+def get_menu():
+    if (not test_mode) or (test_day == 5) or (test_day == 6):
         import datetime
-        if not testMode:
-            weekdayAsInt = datetime.datetime.today().weekday()
+        if not test_mode:
+            weekday_as_int = datetime.datetime.today().weekday()
         else:
-            weekdayAsInt = testDay
-        if weekdayAsInt == 5:
+            weekday_as_int = test_day
+        if weekday_as_int == 5:
             return 'Am Samstag hat die Kantine leider geschlossen.'
-        elif weekdayAsInt == 6:
+        elif weekday_as_int == 6:
             return 'Am Sonntag hat die Kantine leider geschlossen.'
 
-    downloadPdf()
-    extractPdfTextFromPdf()
-    extractTodayFromPdfText()
-    if not textToday:
+    # TODO: This could more efficient if only downloaded once per day/week.
+    download_pdf()
+    extract_pdf_text_from_pdf()
+    extract_today_from_pdf_text()
+    if not text_today:
         return 'Ich konnte für heute leider nichts auf der Speisekarte finden.'
-    global menuText
-    menuText = formatMenu(textToday)
-    print(menuText)
-    return menuText
+    global menu_text
+    menu_text = format_menu()
+    print(menu_text)
+    return menu_text
 
-def getTestMode():
-    return testMode
+
+def get_test_mode():
+    return test_mode
 
 
 def main():
-    getMenu()
+    get_menu()
 
 
 if __name__ == "__main__": main()

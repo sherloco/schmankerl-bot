@@ -322,4 +322,9 @@ pip-selfcheck.json
 
 # Do not upload token file
 *.token
+
+# Do not upload generated Data
 wochenkarte.pdf
+
+# Do not upload url
+url.dat
