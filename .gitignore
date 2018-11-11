@@ -320,3 +320,6 @@ pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/python,pycharm
 
+# Do not upload token file
+*.token
+wochenkarte.pdf

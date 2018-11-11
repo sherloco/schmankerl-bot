@@ -7,6 +7,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+token = ""
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
@@ -17,14 +18,7 @@ def start(bot, update):
 def menu(bot, update):
     """Echo the user message."""
     import menu
-    import datetime
-    weekdayAsInt = datetime.datetime.today().weekday()
-    if weekdayAsInt == 5:
-        update.message.reply_text('Am Samstag hat die Kantine leider geschlossen.')
-    elif weekdayAsInt == 6:
-        update.message.reply_text('Am Sonntag hat die Kantine leider geschlossen.')
-    else:
-        update.message.reply_text(menu.getMenu())
+    update.message.reply_text(menu.getMenu())
 
 
 def error(bot, update, error):
@@ -34,7 +28,11 @@ def error(bot, update, error):
 
 def main():
     """Run bot."""
-    updater = Updater("TOKEN")
+
+    if token == "":
+        loadTokenFromFile()
+
+    updater = Updater(token)
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
@@ -55,6 +53,18 @@ def main():
     # SIGABRT. This should be used most of the time, since start_polling() is
     # non-blocking and will stop the bot gracefully.
     updater.idle()
+
+
+def loadTokenFromFile():
+    import codecs
+    import menu
+    if menu.getTestMode():
+        tokenFile = codecs.open('./justikaDevBot.token', encoding='utf-8')
+    else:
+        tokenFile = codecs.open('./justikaBot.token', encoding='utf-8')
+    global token
+    token = tokenFile.read()
+    tokenFile.close()
 
 
 if __name__ == '__main__':

@@ -1,11 +1,7 @@
-global testMode
 testMode = False
-global testDay
-testDay = 3
-global pdfText
-global textToday
+testDay = 4
+pdfText = ""
 textToday = []
-global menuText
 menuText = []
 
 
@@ -94,12 +90,29 @@ def formatMenu(textToday):
 
 
 def getMenu():
+    if (not testMode) or (testDay == 5) or (testDay == 6):
+        import datetime
+        if not testMode:
+            weekdayAsInt = datetime.datetime.today().weekday()
+        else:
+            weekdayAsInt = testDay
+        if weekdayAsInt == 5:
+            return 'Am Samstag hat die Kantine leider geschlossen.'
+        elif weekdayAsInt == 6:
+            return 'Am Sonntag hat die Kantine leider geschlossen.'
+
     downloadPdf()
     extractPdfTextFromPdf()
     extractTodayFromPdfText()
+    if not textToday:
+        return 'Ich konnte für heute leider nichts auf der Speisekarte finden.'
+    global menuText
     menuText = formatMenu(textToday)
     print(menuText)
     return menuText
+
+def getTestMode():
+    return testMode
 
 
 def main():
