@@ -1,5 +1,5 @@
 global testMode
-testMode = True
+testMode = False
 global testDay
 testDay = 3
 global pdfText

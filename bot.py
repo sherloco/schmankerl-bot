@@ -21,7 +21,7 @@ def menu(bot, update):
     weekdayAsInt = datetime.datetime.today().weekday()
     if weekdayAsInt == 5:
         update.message.reply_text('Am Samstag hat die Kantine leider geschlossen.')
-    elif weekdayAsInt == 5:
+    elif weekdayAsInt == 6:
         update.message.reply_text('Am Sonntag hat die Kantine leider geschlossen.')
     else:
         update.message.reply_text(menu.getMenu())
