@@ -8,9 +8,8 @@ updater = None
 
 def start(bot, update):
     update.message.reply_text(
-        'Hi! Sende /menu <weekday> und ich sage dir, was heute auf der Speisekarte steht. Mit /sub_daily_menu <hour> '
-        '<minute> '
-        'kannst du einstellen, dass ich dir an jedem Werktag automatisch um eine bestimmte Uhrzeit eine Nachricht mit '
+        'Hi! Sende /menu <weekday> und ich sage dir, was auf der Speisekarte steht. Mit /sub_daily_menu <hour> <minute>'
+        ' kannst du einstellen, dass ich dir an jedem Werktag automatisch um eine bestimmte Uhrzeit eine Nachricht mit '
         'dem Speiseplan schicke. Dein Abo kannst mit /show_sub überprüfen oder mit /unsub_daily_menu jederzeit '
         'widerrufen. Die ausgegebenen Daten der Speisekarte stammen von der Website der Kantine und unterliegen dem '
         'entsprechenden Urheberrecht.')
