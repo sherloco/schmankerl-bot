@@ -24,7 +24,7 @@ def menu(bot, update, args):
         now = datetime.datetime.now()
         today1430 = now.replace(hour=14, minute=30, second=0, microsecond=0)
         if now > today1430:
-            weekday = weekday + 1
+            weekday = (weekday + 1) % 7
         update.message.reply_text(menu.get_menu(weekday))
     else:
         try:
