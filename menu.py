@@ -1,8 +1,5 @@
-test_mode = False
-test_day = 4
 pdf_text = ""
-text_today = []
-menu_text = []
+text_for_day = []
 
 
 def download_pdf():
@@ -22,20 +19,22 @@ def extract_pdf_text_from_pdf():
     pdf_reader = PyPDF2.PdfFileReader(pdf_file_object)
     global pdf_text
     pdf_text = pdf_reader.getPage(0).extractText()
+    pdf_file_object.close()
     # print(pdfText)
 
 
-def extract_today_from_pdf_text():
-    current_day = False
+def extract_day_from_pdf_text(weekday: int):
+    is_weekday = False
     for line in pdf_text.splitlines():
-        if current_day:
-            if line.startswith(get_next_day_of_the_week()):
-                current_day = False
+        if is_weekday:
+            # is next day?
+            if line.startswith(get_following_day_as_string(weekday)):
+                is_weekday = False
             else:
-                text_today.append(line)
-        if line.startswith(get_day_of_the_week()):
-            text_today.append(line)
-            current_day = True
+                text_for_day.append(line)
+        if line.startswith(get_weekday_as_string(weekday)):
+            text_for_day.append(line)
+            is_weekday = True
 
 
 def decode_weekday(weekday: int):
@@ -51,73 +50,77 @@ def decode_weekday(weekday: int):
     return switcher.get(weekday, "Invalid day")
 
 
-def get_next_day_of_the_week():
-    import datetime
-    weekday_as_int = (datetime.datetime.today().weekday() + 1) % 7
-    if test_mode:
-        weekday_as_int = (test_day + 1) % 7
-    weekday_as_string = decode_weekday(weekday_as_int)
+def get_following_day_as_string(weekday: int):
+    weekday_as_string = decode_weekday((weekday + 1) % 7)
     return weekday_as_string
 
 
-def get_day_of_the_week():
-    import datetime
-    weekday_as_int = datetime.datetime.today().weekday()
-    if test_mode:
-        weekday_as_int = test_day
-    weekday_as_string = decode_weekday(weekday_as_int)
+def get_weekday_as_string(weekday: int):
+    weekday_as_string = decode_weekday(weekday)
     return weekday_as_string
 
 
 def format_menu():
-    formated_text = []
-    formated_text.append(text_today[0])
+    formatted_text = []
+    formatted_text.append(text_for_day[0])
 
     # for each dish
-    rest = text_today[1:]
+    rest = text_for_day[1:]
     for i in range(0, 3):
         single_dish_string = ''
         for line in rest:
             if line == "":
                 rest = rest[1:]
-                formated_text.append(single_dish_string)
+                formatted_text.append(single_dish_string)
                 break
             else:
                 single_dish_string += line
                 rest = rest[1:]
-    return '\n'.join(formated_text)
+    return '\n'.join(formatted_text)
 
 
-def get_menu():
-    if (not test_mode) or (test_day == 5) or (test_day == 6):
-        import datetime
-        if not test_mode:
-            weekday_as_int = datetime.datetime.today().weekday()
-        else:
-            weekday_as_int = test_day
-        if weekday_as_int == 5:
-            return 'Am Samstag hat die Kantine leider geschlossen.'
-        elif weekday_as_int == 6:
-            return 'Am Sonntag hat die Kantine leider geschlossen.'
+def delete_pdf():
+    import os
+    os.remove('./wochenkarte.pdf')
+
+
+def get_menu(weekday: int):
+    if weekday == 5:
+        return 'Am Samstag hat die Kantine leider geschlossen.'
+    elif weekday == 6:
+        return 'Am Sonntag hat die Kantine leider geschlossen.'
+
+    global pdf_text
+    pdf_text = ""
+    global text_for_day
+    text_for_day = []
 
     # TODO: This could more efficient if only downloaded once per day/week.
     download_pdf()
     extract_pdf_text_from_pdf()
-    extract_today_from_pdf_text()
-    if not text_today:
-        return 'Ich konnte für heute leider nichts auf der Speisekarte finden.'
-    global menu_text
+    delete_pdf()
+    extract_day_from_pdf_text(weekday)
+    if not text_for_day:
+        return 'Ich konnte für diesen Tag leider nichts auf der Speisekarte finden.'
+
     menu_text = format_menu()
-    print(menu_text)
     return menu_text
 
 
-def get_test_mode():
-    return test_mode
-
-
 def main():
-    get_menu()
+    print(get_menu(0))
+    print('----------------------------------')
+    print(get_menu(1))
+    print('----------------------------------')
+    print(get_menu(2))
+    print('----------------------------------')
+    print(get_menu(3))
+    print('----------------------------------')
+    print(get_menu(4))
+    print('----------------------------------')
+    print(get_menu(5))
+    print('----------------------------------')
+    print(get_menu(6))
 
 
 if __name__ == "__main__": main()
