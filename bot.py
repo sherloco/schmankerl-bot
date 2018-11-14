@@ -14,17 +14,11 @@ def start(bot, update):
         'widerrufen. Die ausgegebenen Daten der Speisekarte stammen von der Website der Kantine und unterliegen dem '
         'entsprechenden Urheberrecht.')
 
-
 def menu(bot, update, args):
     """Send the menu."""
-    import datetime
     import menu
     if len(args) == 0:
-        weekday = datetime.datetime.today().weekday()
-        now = datetime.datetime.now()
-        today1430 = now.replace(hour=14, minute=30, second=0, microsecond=0)
-        if now > today1430:
-            weekday = (weekday + 1) % 7
+        weekday = get_weekday_for_current_menu()
         update.message.reply_text(menu.get_menu(weekday))
     else:
         try:
@@ -37,6 +31,16 @@ def menu(bot, update, args):
             update.message.reply_text('Es ist ein Fehler aufgetreten. Bitte probieren Sie /menu <weekday>')
 
 
+def get_weekday_for_current_menu():
+    import datetime
+    weekday = datetime.datetime.today().weekday()
+    now = datetime.datetime.now()
+    today1430 = now.replace(hour=14, minute=30, second=0, microsecond=0)
+    if now > today1430:
+        weekday = (weekday + 1) % 7
+    return weekday
+
+
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     print('Update "%s" caused error "%s"', update, error)
@@ -44,7 +48,7 @@ def error(bot, update, error):
 
 def callback_daily_menu(bot, job):
     import menu
-    bot.send_message(job.context[0], text=menu.get_menu())
+    bot.send_message(job.context[0], text=menu.get_menu(get_weekday_for_current_menu()))
 
 
 def set_daily_menu(bot, update, args, job_queue, chat_data):
