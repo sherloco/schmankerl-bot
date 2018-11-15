@@ -1,0 +1,38 @@
+name: schmankerl-bot
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - asn1crypto=0.24.0=py36_1003
+  - ca-certificates=2018.10.15=ha4d7672_0
+  - certifi=2018.10.15=py36_1000
+  - cffi=1.11.5=py36hfa6e2cd_1001
+  - chardet=3.0.4=py36_1003
+  - cryptography=2.3.1=py36h74b6da3_0
+  - cryptography-vectors=2.3.1=py36_1000
+  - future=0.17.0=py36_1000
+  - idna=2.7=py36_1002
+  - openssl=1.0.2p=hfa6e2cd_1001
+  - pip=18.1=py36_1000
+  - pycparser=2.19=py_0
+  - pyopenssl=18.0.0=py36_1000
+  - pypdf2=1.26.0=py36_1
+  - pysocks=1.6.8=py36_1002
+  - python=3.6.6=he025d50_0
+  - python-telegram-bot=11.1.0=py_0
+  - requests=2.20.1=py36_1000
+  - setuptools=40.5.0=py36_0
+  - six=1.11.0=py36_1001
+  - ujson=1.35=py36hfa6e2cd_1001
+  - urllib3=1.23=py36_1001
+  - vc=14=0
+  - vs2015_runtime=14.0.25420=0
+  - wheel=0.32.2=py36_0
+  - win_inet_pton=1.0.1=py36_1002
+  - wincertstore=0.2=py36_1002
+  - pip:
+    - gitdb2==2.0.5
+    - gitpython==2.1.11
+    - smmap2==2.0.5
+prefix: C:\Users\sr\Anaconda3\envs\schmankerl-bot
+
