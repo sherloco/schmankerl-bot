@@ -156,7 +156,7 @@ def update_env(bot, update):
     try:
         update.message.reply_text('Starting update...')
         import subprocess
-        subprocess.call('conda env update -f=schmankerl-bot-env.yml')
+        subprocess.call('conda env update -f=schmankerl-bot-env.yml', shell=True)
         update.message.reply_text('Update successful.')
     except:
         import traceback
