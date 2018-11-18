@@ -71,7 +71,11 @@ def format_menu():
         for line in rest:
             if line == "":
                 rest = rest[1:]
-                formatted_text.append(single_dish_string)
+                import re
+                s = re.sub(" *(\d,)*\d?$", "", single_dish_string)
+                s = re.sub("  \"OPTIMAHL\"", " (OPTIMAHL™)", s)
+                s = re.sub("^", "• ", s)
+                formatted_text.append(re.sub(" *(\d,)*\d?$", "", s))
                 break
             else:
                 single_dish_string += line
