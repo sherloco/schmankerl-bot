@@ -1,10 +1,13 @@
+import re
+import requests
+import codecs
+import slate3k as slate
+
 pdf_text = ""
 text_for_day = []
 
 
 def download_pdf():
-    import requests
-    import codecs
     url_file = codecs.open('./url.dat', encoding='utf-8')
     url = url_file.read()
     r = requests.get(url, stream=True)
@@ -14,13 +17,18 @@ def download_pdf():
 
 
 def extract_pdf_text_from_pdf():
-    import PyPDF2
-    pdf_file_object = open('./wochenkarte.pdf', 'rb')
-    pdf_reader = PyPDF2.PdfFileReader(pdf_file_object)
+    with open('./wochenkarte.pdf', 'rb') as f:
+        pdf = slate.PDF(f)
+    # print(doc.text(clean = False))
+
+    # import PyPDF2
+    # pdf_file_object = open('./wochenkarte.pdf', 'rb')
+    # pdf_reader = PyPDF2.PdfFileReader(pdf_file_object)
+
     global pdf_text
-    pdf_text = pdf_reader.getPage(0).extractText()
-    pdf_file_object.close()
-    # print(pdfText)
+    pdf_text = pdf[0]  # pdf_reader.getPage(0).extractText()
+    # pdf_file_object.close()
+    # print(pdf_text)
 
 
 def extract_day_from_pdf_text(weekday: int):
@@ -61,26 +69,25 @@ def get_weekday_as_string(weekday: int):
 
 
 def format_menu():
-    formatted_text = []
-    formatted_text.append(text_for_day[0])
+    # remove blank lines
+    lines = list(filter(lambda x: x != '', text_for_day))
 
-    # for each dish
-    rest = text_for_day[1:]
-    for i in range(0, 3):
-        single_dish_string = ''
-        for line in rest:
-            if line == "":
-                rest = rest[1:]
-                import re
-                s = re.sub(" *(\d,)*\d?$", "", single_dish_string)
-                s = re.sub("  \"OPTIMAHL\"", " (OPTIMAHL™)", s)
-                s = re.sub("^", "• ", s)
-                formatted_text.append(re.sub(" *(\d,)*\d?$", "", s))
-                break
-            else:
-                single_dish_string += line
-                rest = rest[1:]
-    return '\n'.join(formatted_text)
+    ret_value = [lines[0]]
+
+    dishes = lines[1:]
+
+    def format_single_line(s: str):
+        ret = re.sub("(\d,)*\d?$", "", s)
+        ret = re.sub("  \"OPTIMAHL\"", " (OPTIMAHL)", ret)
+        ret = re.sub("^", "• ", ret)
+        ret = re.sub("\d,\d", "", ret)
+        return ret
+
+    ret_value += list(map(format_single_line, dishes))
+
+    ret_value = '\n'.join(ret_value)
+
+    return ret_value
 
 
 def delete_pdf():
@@ -114,17 +121,17 @@ def get_menu(weekday: int):
 def main():
     print(get_menu(0))
     print('----------------------------------')
-    print(get_menu(1))
-    print('----------------------------------')
-    print(get_menu(2))
-    print('----------------------------------')
-    print(get_menu(3))
-    print('----------------------------------')
-    print(get_menu(4))
-    print('----------------------------------')
-    print(get_menu(5))
-    print('----------------------------------')
-    print(get_menu(6))
+    # print(get_menu(1))
+    # print('----------------------------------')
+    # print(get_menu(2))
+    # print('----------------------------------')
+    # print(get_menu(3))
+    # print('----------------------------------')
+    # print(get_menu(4))
+    # print('----------------------------------')
+    # print(get_menu(5))
+    # print('----------------------------------')
+    # print(get_menu(6))
 
 
 if __name__ == "__main__": main()
