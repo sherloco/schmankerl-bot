@@ -1,8 +1,11 @@
-from telegram.ext import Updater, CommandHandler, Filters
-import telegram
 import os
 import sys
 from threading import Thread
+
+from telegram.ext import (Updater, CommandHandler, Filters)
+import telegram
+
+import menu
 
 devMode = False
 
