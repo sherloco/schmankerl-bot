@@ -1,4 +1,5 @@
 from telegram.ext import Updater, CommandHandler, Filters
+import telegram
 import os
 import sys
 from threading import Thread
@@ -24,12 +25,12 @@ def menu(bot, update, args):
     import menu
     if len(args) == 0:
         weekday = get_weekday_for_current_menu()
-        update.message.reply_text(menu.get_menu(weekday))
+        update.message.reply_text(text=menu.get_menu(weekday), parse_mode=telegram.ParseMode.MARKDOWN)
     else:
         try:
             weekday = decode_weekday(args[0])
             if isinstance(weekday, int):
-                update.message.reply_text(menu.get_menu(weekday))
+                update.message.reply_text(text=menu.get_menu(weekday), parse_mode=telegram.ParseMode.MARKDOWN)
             else:
                 raise ValueError('weekday not known.')
         except Exception:
@@ -53,7 +54,8 @@ def error(bot, update, error):
 
 def callback_daily_menu(bot, job):
     import menu
-    bot.send_message(job.context[0], text=menu.get_menu(get_weekday_for_current_menu()))
+    bot.send_message(job.context[0], text=menu.get_menu(get_weekday_for_current_menu()),
+                     parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 def set_daily_menu(bot, update, args, job_queue, chat_data):

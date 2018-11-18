@@ -72,7 +72,7 @@ def format_menu():
     # remove blank lines
     lines = list(filter(lambda x: x != '', text_for_day))
 
-    ret_value = [lines[0]]
+    ret_value = ['*' + lines[0] + '*']
 
     dishes = lines[1:]
 
