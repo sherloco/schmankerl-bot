@@ -19,19 +19,13 @@ def download_pdf():
 def extract_pdf_text_from_pdf():
     with open('./wochenkarte.pdf', 'rb') as f:
         pdf = slate.PDF(f)
-    # print(doc.text(clean = False))
-
-    # import PyPDF2
-    # pdf_file_object = open('./wochenkarte.pdf', 'rb')
-    # pdf_reader = PyPDF2.PdfFileReader(pdf_file_object)
 
     global pdf_text
-    pdf_text = pdf[0]  # pdf_reader.getPage(0).extractText()
-    # pdf_file_object.close()
-    # print(pdf_text)
+    pdf_text = pdf[0]
 
 
 def extract_day_from_pdf_text(weekday: int):
+    global text_for_day
     is_weekday = False
     for line in pdf_text.splitlines():
         if is_weekday:
@@ -43,6 +37,9 @@ def extract_day_from_pdf_text(weekday: int):
         if line.startswith(get_weekday_as_string(weekday)):
             text_for_day.append(line)
             is_weekday = True
+
+    if weekday == 4:
+        text_for_day = text_for_day[:8]
 
 
 def decode_weekday(weekday: int):
@@ -81,6 +78,8 @@ def format_menu():
         ret = re.sub("  \"OPTIMAHL\"", " (OPTIMAHL)", ret)
         ret = re.sub("^", "• ", ret)
         ret = re.sub("\d,\d", "", ret)
+        ret = re.sub("\d ", "", ret)
+        ret = ret.rstrip()
         return ret
 
     ret_value += list(map(format_single_line, dishes))
@@ -121,17 +120,17 @@ def get_menu(weekday: int):
 def main():
     print(get_menu(0))
     print('----------------------------------')
-    # print(get_menu(1))
-    # print('----------------------------------')
-    # print(get_menu(2))
-    # print('----------------------------------')
-    # print(get_menu(3))
-    # print('----------------------------------')
-    # print(get_menu(4))
-    # print('----------------------------------')
-    # print(get_menu(5))
-    # print('----------------------------------')
-    # print(get_menu(6))
+    print(get_menu(1))
+    print('----------------------------------')
+    print(get_menu(2))
+    print('----------------------------------')
+    print(get_menu(3))
+    print('----------------------------------')
+    print(get_menu(4))
+    print('----------------------------------')
+    print(get_menu(5))
+    print('----------------------------------')
+    print(get_menu(6))
 
 
 if __name__ == "__main__": main()
